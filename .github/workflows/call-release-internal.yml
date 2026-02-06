@@ -1,0 +1,67 @@
+name: "Release in internal maven"
+on:
+  workflow_call:
+    inputs:
+      VERSION_NAME:
+        required: true
+        type: string
+      VERSION_CODE:
+        required: false
+        type: string
+        default: 1
+      FLAVOR_TYPE:
+        required: true
+        type: string
+    secrets:
+      ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEY:
+        required: true
+      ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYID:
+        required: true
+      ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYPASSWORD:
+        required: true
+      ORG_GRADLE_PROJECT_FLIPPERMAVEN_USERNAME:
+        required: true
+      ORG_GRADLE_PROJECT_FLIPPERMAVEN_PASSWORD:
+        required: true
+    outputs:
+      HASH_XCFRAMEWORK_DEBUG:
+        value: ${{ jobs.publish_internal.outputs.HASH_XCFRAMEWORK_DEBUG }}
+      HASH_XCFRAMEWORK_RELEASE:
+        value: ${{ jobs.publish_internal.outputs.HASH_XCFRAMEWORK_RELEASE }}
+
+jobs:
+  publish_internal:
+    name: "Publish on Internal Maven"
+    runs-on: [ self-hosted, macOS ]
+    env:
+      ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEY }}
+      ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYID }}
+      ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYPASSWORD }}
+      ORG_GRADLE_PROJECT_current_flavor_type: ${{ inputs.FLAVOR_TYPE }}
+      ORG_GRADLE_PROJECT_flipperMavenUsername: ${{ secrets.ORG_GRADLE_PROJECT_FLIPPERMAVEN_USERNAME }}
+      ORG_GRADLE_PROJECT_flipperMavenPassword: ${{ secrets.ORG_GRADLE_PROJECT_FLIPPERMAVEN_PASSWORD }}
+    outputs:
+      HASH_XCFRAMEWORK_DEBUG: ${{ steps.hashes.outputs.hash_debug }}
+      HASH_XCFRAMEWORK_RELEASE: ${{ steps.hashes.outputs.hash_release }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 1.17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Replace gradle properties with sed
+        run: |
+          sed -i -e 's/^makeevrserg.project.version.string=.*$/makeevrserg.project.version.string=${{ inputs.VERSION_NAME }}/g' gradle.properties
+          sed -i -e 's/^makeevrserg.project.version.code=.*$/makeevrserg.project.version.code=${{ inputs.VERSION_CODE }}/g' gradle.properties
+      - name: Run publish
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: publishAllPublicationsToFlipperMavenRepository --stacktrace
+      - name: Print hashes
+        id: hashes
+        run: |
+          echo "hash_debug=$(swift package compute-checksum entrypoint/build/xcframework-zips/BusyLibKMP-debug.xcframework.zip)" >> "$GITHUB_OUTPUT"
+          echo "hash_release=$(swift package compute-checksum entrypoint/build/xcframework-zips/BusyLibKMP-release.xcframework.zip)" >> "$GITHUB_OUTPUT"

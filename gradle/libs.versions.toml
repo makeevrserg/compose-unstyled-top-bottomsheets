@@ -32,7 +32,8 @@ composables-ripple = { module = "com.composables:ripple-indication", version.ref
 androidx-compose-test = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "junitAndroid" }
 androidx-compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "junitAndroid" }
 androidx-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
-
+vaniktech = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "vanniktech" }
+kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
