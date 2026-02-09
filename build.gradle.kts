@@ -6,4 +6,11 @@ plugins {
     alias(libs.plugins.compose.hotreload) apply false
     alias(libs.plugins.maven.publish)
     alias(libs.plugins.detekt).apply(false)
+    alias(libs.plugins.klibs.gradle.publication) apply false
+    alias(libs.plugins.klibs.gradle.rootinfo) apply false
+}
+
+apply(plugin = "ru.astrainteractive.gradleplugin.root.info")
+allprojects {
+    apply(plugin = "ru.astrainteractive.gradleplugin.root.info")
 }

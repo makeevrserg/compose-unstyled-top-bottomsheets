@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
-    alias(libs.plugins.maven.publish)
+    alias(libs.plugins.klibs.gradle.publication)
 }
 
 val publishGroupId = "com.composables"
@@ -68,44 +68,3 @@ android {
 
 group = publishGroupId
 version = publishVersion
-
-mavenPublishing {
-    publishToMavenCentral(automaticRelease = true, validateDeployment = false)
-    if (project.hasProperty("signingInMemoryKeyId")) {
-        signAllPublications()
-    }
-
-    coordinates(publishGroupId, "composeunstyled-internal-shared", publishVersion)
-
-    pom {
-        name.set("Compose Unstyled Internal Shared")
-        description.set("Internal shared utilities for Compose Unstyled - foundational components for building high-quality, accessible design systems in Compose Multiplatform.")
-        url.set(projectUrl)
-
-        licenses {
-            license {
-                name.set("MIT License")
-                url.set("https://${githubUrl}/blob/main/LICENSE")
-            }
-        }
-
-        issueManagement {
-            system.set("GitHub Issues")
-            url.set("https://${githubUrl}/issues")
-        }
-
-        developers {
-            developer {
-                id.set("composablehorizons")
-                name.set("Composable Horizons")
-                email.set("alex@composablesui.com")
-            }
-        }
-
-        scm {
-            connection.set("scm:git:${githubUrl}.git")
-            developerConnection.set("scm:git:ssh://${githubUrl}.git")
-            url.set("https://${githubUrl}/tree/main")
-        }
-    }
-}

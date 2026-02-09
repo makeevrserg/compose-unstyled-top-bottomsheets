@@ -11,6 +11,7 @@ activity-core = "1.10.1"
 lucide = "1.0.0"
 ripple = "1.1.0"
 window = "1.4.0"
+klibs-gradleplugin = "1.14.0"
 
 # Android
 android-compileSDK = "35"
@@ -42,3 +43,5 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+klibs-gradle-publication = { id = "ru.astrainteractive.gradleplugin.publication", version.ref = "klibs-gradleplugin" }
+klibs-gradle-rootinfo = { id = "ru.astrainteractive.gradleplugin.root.info", version.ref = "klibs-gradleplugin" }

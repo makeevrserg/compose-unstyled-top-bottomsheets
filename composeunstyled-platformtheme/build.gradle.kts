@@ -13,7 +13,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.detekt)
-    alias(libs.plugins.maven.publish)
+    alias(libs.plugins.klibs.gradle.publication)
 }
 
 val publishGroupId = "com.composables"
@@ -147,47 +147,5 @@ tasks.withType<Detekt>().configureEach {
         sarif.required.set(false)
     }
 }
-
 group = publishGroupId
 version = publishVersion
-
-mavenPublishing {
-    publishToMavenCentral(automaticRelease = true, validateDeployment = false)
-    if (project.hasProperty("signingInMemoryKeyId")) {
-        signAllPublications()
-    }
-
-    coordinates(publishGroupId, "composeunstyled-platformtheme", version = publishVersion)
-
-    pom {
-        name.set("Compose Unstyled Platform Theme")
-        description.set("Theme with native look and feel for Compose Multiplatform.")
-        url.set(projectUrl)
-
-        licenses {
-            license {
-                name.set("MIT License")
-                url.set("https://${githubUrl}/blob/main/LICENSE")
-            }
-        }
-
-        issueManagement {
-            system.set("GitHub Issues")
-            url.set("https://${githubUrl}/issues")
-        }
-
-        developers {
-            developer {
-                id.set("composablehorizons")
-                name.set("Composable Horizons")
-                email.set("alex@composablesui.com")
-            }
-        }
-
-        scm {
-            connection.set("scm:git:${githubUrl}.git")
-            developerConnection.set("scm:git:ssh://${githubUrl}.git")
-            url.set("https://${githubUrl}/tree/main")
-        }
-    }
-}
